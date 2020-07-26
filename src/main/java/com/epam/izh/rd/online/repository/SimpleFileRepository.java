@@ -1,8 +1,10 @@
 package com.epam.izh.rd.online.repository;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.StandardCopyOption;
 
 public class SimpleFileRepository implements FileRepository {
@@ -17,23 +19,23 @@ public class SimpleFileRepository implements FileRepository {
     public long countFilesInDirectory(String path) {
         long count = 0;
 
-      ClassLoader classLoader = getClass().getClassLoader();
-            File obj = new File(classLoader.getResource(path).getFile());
+        ClassLoader classLoader = getClass().getClassLoader();
+        File obj = new File(classLoader.getResource(path).getFile());
 
-       if (obj.exists()) {
-           File[] files = obj.listFiles();
+        if (obj.exists()) {
+            File[] files = obj.listFiles();
 
-           for (File x : files) {
-               if (x.isFile()) {
-                   count++;
-               }
-               if (x.isDirectory()) {
-                   count = count + countFilesInDirectory(path + "/" + x.getName());
+            for (File x : files) {
+                if (x.isFile()) {
+                    count++;
+                }
+                if (x.isDirectory()) {
+                    count = count + countFilesInDirectory(path + "/" + x.getName());
 
-               }
-           }
-           return count;
-       }
+                }
+            }
+            return count;
+        }
 
         return count;
     }
@@ -55,18 +57,17 @@ public class SimpleFileRepository implements FileRepository {
         if (obj.exists()) {
             File[] files = obj.listFiles();
 
-            for(File x : files) {
+            for (File x : files) {
 
-                if (x.isDirectory()){
+                if (x.isDirectory()) {
                     count++;
                     count = count + countFilesInDirectory(path + "/" + x.getName());
                 }
             }
-            return count-5;
+            return count - 5;
         }
         return count;
     }
-
 
 
     /**
@@ -79,18 +80,20 @@ public class SimpleFileRepository implements FileRepository {
     public void copyTXTFiles(String from, String to) {
 
         ClassLoader classLoader = getClass().getClassLoader();
-        String respath =  (new File(classLoader.getResource("").getFile())).getAbsolutePath();
+        String respath = (new File(classLoader.getResource("").getFile())).getAbsolutePath();
         File frompath = new File(respath + "/" + from);
         File topath = new File(respath + "/" + to);
 
-        if (frompath.exists()&&topath.exists()) {
+        if (frompath.exists() && topath.exists()) {
             File[] files = frompath.listFiles();
 
             for (File x : files) {
                 if (x.isFile() && x.toPath().endsWith(".txt")) {
                     try {
                         Files.move(x.toPath(), topath.toPath(), StandardCopyOption.ATOMIC_MOVE);
-                    } catch (Exception e) { e.printStackTrace(); }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -110,7 +113,7 @@ public class SimpleFileRepository implements FileRepository {
 
         ClassLoader classLoader = getClass().getClassLoader();
 
-      String str =  (new File(classLoader.getResource("").getFile())).getAbsolutePath();
+        String str = (new File(classLoader.getResource("").getFile())).getAbsolutePath();
 
         File objdir = new File(str + "/" + path);
 
@@ -123,9 +126,10 @@ public class SimpleFileRepository implements FileRepository {
         if (!objfile.exists()) {
             try {
                 objfile.createNewFile();
-                  return objfile.exists();
+                return objfile.exists();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            catch (Exception e) {e.printStackTrace();}
         }
 
         return objfile.exists();
@@ -146,15 +150,16 @@ public class SimpleFileRepository implements FileRepository {
         ClassLoader classLoader = getClass().getClassLoader();
         File obj = new File(classLoader.getResource(fileName).getFile());
 
-    try(FileInputStream file = new FileInputStream(obj);
-    BufferedReader text = new BufferedReader(new InputStreamReader(file))) {
+        try (FileInputStream file = new FileInputStream(obj);
+             BufferedReader text = new BufferedReader(new InputStreamReader(file))) {
 
-    while(text.ready()) {
-        str = str + text.readLine();
-    }
+            while (text.ready()) {
+                str = str + text.readLine();
+            }
 
-}
-    catch(Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         return str;
