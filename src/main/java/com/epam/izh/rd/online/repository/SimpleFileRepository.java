@@ -113,27 +113,27 @@ public class SimpleFileRepository implements FileRepository {
 
         ClassLoader classLoader = getClass().getClassLoader();
 
-        String str = (new File(classLoader.getResource("").getFile())).getAbsolutePath();
+        String pathToResources = (new File(classLoader.getResource("").getFile())).getAbsolutePath();
 
-        File objdir = new File(str + "/" + path);
+        File dirToCreate = new File(pathToResources + "/" + path);
 
-        if (!objdir.exists()) {
-            objdir.mkdir();
+        if (!dirToCreate.exists()) {
+            dirToCreate.mkdir();
         }
 
-        File objfile = new File(objdir.getAbsolutePath() + "/" + name);
+        File fileToCreate = new File(dirToCreate.getAbsolutePath() + "/" + name);
 
-        if (!objfile.exists()) {
+        if (!fileToCreate.exists()) {
             try {
-                objfile.createNewFile();
-                return objfile.exists();
+                fileToCreate.createNewFile();
+                return fileToCreate.exists();
             } catch (Exception e) {
                 e.printStackTrace();
+                // точно не получилось
+                return false;
             }
         }
-
-        return objfile.exists();
-
+        return fileToCreate.exists();
     }
 
     /**
